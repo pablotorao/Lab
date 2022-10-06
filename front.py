@@ -6,6 +6,25 @@ import numpy as np
 import altair as alt
 from scipy import signal
 fig, ax = plt.subplots()
+def rampt2(li,ls,a,p):
+        t=rang(li,ls,p)
+        y  = t*0
+        dis=ls-li
+        m=a/(ls-dis*1/3-(li+dis*1/3))
+        y[(t<ls- dis*2/3) ] =0
+        y[(t> ls-dis*2/3)&(t<ls-dis/3) ] =((t[(t> ls-dis*2/3)&(t<ls-dis/3)])-(li+dis/3))*m
+        y[(t>ls- dis/3) ] =a
+        return t,y
+def rampt3(li,ls,a,p):
+        t=rang(li,ls,p)
+        y  = t*0
+        dis=ls-li
+        m=a/(ls-dis*2/3-(li+dis*2/3))
+        y[(t<ls- dis*2/3) ] =a
+        y[(t> ls-dis*2/3)&(t<ls-dis/3) ] =((t[(t> ls-dis*2/3)&(t<ls-dis/3)])-(li+dis*2/3))*m
+        y[(t>ls- dis/3) ] =0
+        return t,y
+
 def rampt(li,ls,a,p):
 	t=rang(li,ls,p)
 	y  = t*0
@@ -88,7 +107,7 @@ def conv(r,s):
 def option_type():
 	option_type = st.selectbox(
 	'Type',
-	('choose','Continuous', 'Discreta',))
+	('En que lo puedo ayudar?','Continua', 'Discreta',))
 	return option_type
 one='1'
 two='2'
@@ -103,34 +122,34 @@ def graph(r,y,r2,y2):
 def type(one,two):
 	option1 = st.selectbox(
         'Funcion'+one,
-        ('Exponencial Ae^-bt', 'Senoidal', 'Triangular', 'Rectangular', 'Rampa'))
+        ('Exponencial Ae^-bt', 'Senoidal', 'Triangular', 'Rectangular', 'Rampa1','Rampa2','Rampa3'))
 	option2 = st.selectbox(
         'Funcion '+two,
-        ('Exponencial Ae^-bt', 'Senoidal', 'Triangular', 'Rectangular', 'Rampa'))
+        ('Exponencial Ae^-bt', 'Senoidal', 'Triangular', 'Rectangular', 'Rampa1','Rampa2','Rampa3'))
 	return option1,option2
 def contp(which):
 	st.header("Funcion"+': '+which)
 	li = st.slider('Limite inferior'+' '+which,-10,10, -5)
 	ls = st.slider('Limite superior'+' '+which,-10, 10, 5)
-	a = st.slider('Amplitud'+' '+which,0,20, 1)
-	f = st.slider('Frecuencia'+' '+which, 0, 100, 5)
+	a = st.slider('Amplitud'+' '+which,-20,20, 1)
+	f = st.slider('Frecuencia'+' '+which, 0, 10, 5)
 	return li, ls, a, f
 def contrec(which):
 	st.header("Funcion"+': '+which)
 	li = st.slider('Limite inferior'+' '+which,-10,10, -5)
 	ls = st.slider('Limite superior'+' '+which,-10, 10, 5)
-	a = st.slider('Amplitud'+' '+which,0,20, 1)
+	a = st.slider('Amplitud'+' '+which,-20,20, 1)
 	return li,ls,a
 def contexp(which):
 	st.header("Funcion"+': '+which)
-	li = st.slider('Limite inferior'+' '+which,-10,10, -5)
-	ls = st.slider('Limite superior'+' '+which,-10, 10, 5)
-	b = st.slider('b'+' '+which,0,20, 1)
-	a = st.slider('A'+' '+which,0,20, 1)
+	li = st.slider('Limite inferior'+' '+which,-4,4, -1)
+	ls = st.slider('Limite superior'+' '+which,-4, 4, 1)
+	b = st.slider('b'+' '+which,-4,4, 1)
+	a = st.slider('A'+' '+which,-10,10, 1)
 	return li, ls, a, b
 col1, col2 = st.columns(2)
 with col1:	
-	if option_type== 'Continuous':
+	if option_type== 'Continua':
 		a,b =type(one,two)
 		if a== 'Senoidal':
 			li , ls, a, f = contp(one)
@@ -141,9 +160,15 @@ with col1:
 		if a=='Rectangular':
 			li,ls,a = contrec(one)
 			t,y=rec(li,ls,a,p1)	
-		if a=='Rampa':
+		if a=='Rampa3':
 			li,ls,a=contrec(one)
 			t,y=rampt(li,ls,a,p1)
+		if a=='Rampa1':
+                        li,ls,a=contrec(one)
+                        t,y=rampt2(li,ls,a,p1)
+		if a=='Rampa2':
+                        li,ls,a=contrec(one)
+                        t,y=rampt3(li,ls,a,p1)
 		if a=='Exponencial Ae^-bt':
 			li, ls, a , bex = contexp(one)
 			t,y=expo(li,ls,bex,a,p1)
@@ -157,9 +182,15 @@ with col1:
 		if b=='Rectangular':
 			li2,ls2,a2=contrec(two)
 			t2,y2=rec(li2,ls2,a2,p1)    
-		if b=='Rampa':
+		if b=='Rampa3':
 			li2,ls2,a2=contrec(two)
 			t2,y2=rampt(li2,ls2,a2,p1)
+		if b=='Rampa1':   
+                        li2,ls2,a2=contrec(two)
+                        t2,y2=rampt2(li2,ls2,a2,p1)
+		if b=='Rampa2':   
+                        li2,ls2,a2=contrec(two)
+                        t2,y2=rampt3(li2,ls2,a2,p1)
 		if b=='Exponencial Ae^-bt':
 			li2, ls2, a2, b2 = contexp(two)
 			t2,y2=expo(li2,ls2,b2,a2,p1)
@@ -178,10 +209,18 @@ with col1:
 			li,ls,a=contrec(one)
 			p2=0.5
 			t,y=rec(li,ls,a,p2)     
-		if a=='Rampa':
+		if a=='Rampa3':
 			li,ls,a=contrec(one)
 			p2=0.5
 			t,y=rampt(li,ls,a,p2)
+		if a=='Rampa1':
+                        li,ls,a=contrec(one)
+                        p2=0.5
+                        t,y=rampt2(li,ls,a,p2)
+		if a=='Rampa2':
+                        li,ls,a=contrec(one)
+                        p2=0.5
+                        t,y=rampt3(li,ls,a,p2)
 		if a=='Exponencial Ae^-bt':
 			li, ls, a , bex = contexp(one)
 			p2=0.2
@@ -198,11 +237,18 @@ with col1:
 			li2,ls2,a2=contrec(two)
 			p2=0.5
 			t2,y2=rec(li2,ls2,a2,p2)   
-		if b=='Rampa':
+		if b=='Rampa3':
 			li2,ls2,a2=contrec(two)
 			p2=0.5
 			t2,y2=rampt(li2,ls2,a2,p2)
-
+		if b=='Rampa1':
+                        li2,ls2,a2=contrec(two)
+                        p2=0.5
+                        t2,y2=rampt2(li2,ls2,a2,p2)
+		if b=='Rampa2':
+                        li2,ls2,a2=contrec(two)
+                        p2=0.5
+                        t2,y2=rampt3(li2,ls2,a2,p2)
 		if b=='Exponencial Ae^-bt':
 			li2, ls2, a2, b2 = contexp(two)
 			p2=0.2
@@ -211,7 +257,7 @@ with col1:
 with col2:
 	if st.button('Graficar '): 
 		the_plot=st.pyplot(fig)
-		if option_type== 'Continuous':
+		if option_type== 'Continua':
 			try:
 				graph(t,y,t2,y2)
 			except:
@@ -221,8 +267,8 @@ with col2:
                                 graphdisc2(t,y,t2,y2)
                         except:
                                 pass
-	if st.button('conv'):
-		if option_type== 'Continuous':
+	if st.button('Convolucionar'):
+		if option_type== 'Continua':
 			the_plot2=st.pyplot(fig)
 			the_plot=st.pyplot(fig)	
 			a=conv(y,y2)

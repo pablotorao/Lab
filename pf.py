@@ -100,6 +100,7 @@ def intento():
         if option==selet[1]:
             outp(datav[1])
 
+
 option = st.selectbox(
     'Tipo de archivo',
     ('CSV', 'WAV'))
@@ -113,14 +114,12 @@ if option == 'CSV':
             dataft2 = [0] * len(uploaded_files)
             datavector = [0] * len(uploaded_files)
             t = [0] * len(uploaded_files)
-
             ft = [0] * len(uploaded_files)
             fs1=10
             for uploaded_file in uploaded_files:
                 inf2 = str(uploaded_file.read(), 'utf-8')
                 text = inf2.split("\n")
                 del text[-1]
-
                 data = [0] * len(text)
                 i = 0
                 for number in text:
@@ -129,8 +128,7 @@ if option == 'CSV':
                 vector = np.array(data)
                 print(uploaded_file.name)
                 datavector[n]=vector
-                #print(datavector)
-                #numerodedatos=len(vector)
+
                 ft1 = np.fft.fft(vector)
                 ft1=ft1.real
                 ft[n] = ft1.real
@@ -138,7 +136,6 @@ if option == 'CSV':
                 t[n] = np.fft.fftfreq(len(vector)) * fs1
                 datav[n]=operaciones(vector,uploaded_file)
                 dataft[n]=operaciones(ft1,uploaded_file)
-
                 print(datav[n])
 
 
@@ -165,11 +162,7 @@ else:
                 n = n + 1
         else:
             pass
-#print(datav[0][1])
-
-#
 try:
- #   nof, sif=sanita(uploaded_files,datav)
     selet=[0]*len(datav)
     n=0
     for dato in datav:
@@ -219,10 +212,10 @@ try:
     plt.pcolormesh(t, f, Sxx, shading='gouraud')
     plt.ylabel('Frequency [Hz]')
     plt.xlabel('Time ')
-    plt.savefig('desesperacion.png')
+    plt.savefig('.desesperacion.png')
     plt.show()
     with st.expander('Spectogram'):
-        st.image('desesperacion.png')
+        st.image('.desesperacion.png')
 
 except:
 
